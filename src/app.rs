@@ -463,9 +463,9 @@ pub(crate) fn now_rfc3339() -> String {
     dates::fmt_rfc3339(secs)
 }
 
-/// A `YYYY-MM-DD` date, zero-padded, so it compares as a string.
-/// A date flag's value, checked: cli-common's `parse_iso` takes any day from
-/// 1 to 31, so a day the month does not have is refused here.
+/// A date flag's value as `YYYY-MM-DD`, zero-padded so it compares as a
+/// string. cli-common's `parse_iso` takes any day from 1 to 31, so a day the
+/// month does not have is refused here.
 fn iso(d: &str) -> Result<String, CliError> {
     let (y, m, day) = dates::parse_iso(d.trim())?;
     let leap = (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;

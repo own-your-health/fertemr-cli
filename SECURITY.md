@@ -32,8 +32,9 @@ Report a vulnerability privately through GitHub's "Report a vulnerability"
   name says it is) and `records export -o` (a stub portal on this machine
   only).
 - `auth logout --profile <NAME>` signs out at the portal, then removes the
-  profile's session and its Chrome profile (a portal that cannot be reached
-  is a warning; the session is removed anyway). `profiles remove <NAME>`
+  profile's session and its Chrome profile (a portal that cannot be reached,
+  or that answers an error other than an ended session, is a warning; the
+  session is removed anyway). `profiles remove <NAME>`
   removes the session, the Chrome profile and the profile without contacting
   the portal, and `auth reset` every session and the vault key; the portal
   ends those sessions on its own.
