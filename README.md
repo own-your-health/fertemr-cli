@@ -148,7 +148,7 @@ point fertemr at a scratch vault:
 cargo run --example stub-portal        # prints its address, user id and password
 export XDG_CONFIG_HOME=$(mktemp -d) FERTEMR_KEYCHAIN_SERVICE=piekstra.fertemr.stub
 fertemr profiles add test
-printf 'user@example.com\nright-password\n' | fertemr auth login --profile test --portal <address> --stdin
+printf '%s\n' user@example.com right-password | fertemr auth login --profile test --portal <address> --stdin
 ```
 
 `STUB_SCENARIO` (`no-embryology`, `files-fail`, `bad-pdf`, `no-calendar`,
