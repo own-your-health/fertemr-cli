@@ -1,0 +1,458 @@
+{
+  "c": 0,
+  "t": "",
+  "d": {
+    "Folder": "Inbox",
+    "DtFrom": null,
+    "DtTo": null,
+    "UnreadOnly": false,
+    "NotReplied": false,
+    "SearchTerm": null,
+    "TotalMessages": 2,
+    "Page": 0,
+    "PageSize": 1000,
+    "TotalPages": 1,
+    "Options_PageSize": [
+      {
+        "label": "10",
+        "value": "10"
+      }
+    ],
+    "Selected_PageSize": [
+      {
+        "label": "10",
+        "value": "10"
+      }
+    ],
+    "Messages": [
+      {
+        "MsgID": 1101,
+        "IsRead": true,
+        "DtRead": "2025-03-06T10:00:00+00:00",
+        "DisplayDtRead": "",
+        "IsReadByPatient": true,
+        "DtReadByPatient": "2025-03-06T10:00:00.0000000+00:00",
+        "DisplayDtReadByPatient": "03/06/2025 10:00 AM",
+        "FromPatient": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "FromPatientDisplay": null,
+        "FromUser": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "FromUserDisplay": "",
+        "FromGroup": {
+          "Name": "Example Nurse Team",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 1,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": "Example Nurse Team"
+        },
+        "FromGroupDisplay": "Example Nurse Team",
+        "ToPatient": {
+          "Name": "Jane Example",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": true,
+          "RecordID": 0,
+          "DisplayName": "Jane Example"
+        },
+        "ToPatientDisplay": "Jane Example",
+        "ToUser": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "ToUserDisplay": "",
+        "ToGroup": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "ToGroupDisplay": "",
+        "Subject": "Your results are ready",
+        "RelatedPatientDisplay": "Jane Example",
+        "RelatedPatient": {
+          "Name": "Jane Example",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": true,
+          "RecordID": 0,
+          "DisplayName": "Jane Example"
+        },
+        "AssignedUser": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "AssignedUserDisplay": "",
+        "Body": "<p>Hello,</p><p>Your results are in the portal.</p>",
+        "PlainTextBody": "Hello,\nYour results are in the portal.",
+        "BodyIsHTML": true,
+        "DtSentOrReceived": "2025-03-06T09:00:00.0000000+00:00",
+        "DisplaySentOrReceived": "03/06/2025 09:00 AM",
+        "MsgType": null,
+        "Draft": false,
+        "Trashed": false,
+        "Archived": false,
+        "ArchivedByPatient": false,
+        "NumAttachments": 1,
+        "NumReplies": 0,
+        "MessagesInThread": [
+          {
+            "MsgID": 1102,
+            "IsRead": true,
+            "DtRead": "2025-03-06T10:00:00+00:00",
+            "DisplayDtRead": "",
+            "IsReadByPatient": true,
+            "DtReadByPatient": "2025-03-06T10:00:00.0000000+00:00",
+            "DisplayDtReadByPatient": "03/06/2025 10:00 AM",
+            "FromPatient": {
+              "Name": "Jane Example",
+              "MRN": null,
+              "GroupName": null,
+              "GroupID": 0,
+              "IsPatient": true,
+              "RecordID": 0,
+              "DisplayName": "Jane Example"
+            },
+            "FromPatientDisplay": "Jane Example",
+            "FromUser": {
+              "Name": "",
+              "MRN": null,
+              "GroupName": null,
+              "GroupID": 0,
+              "IsPatient": false,
+              "RecordID": 0,
+              "DisplayName": ""
+            },
+            "FromUserDisplay": "",
+            "FromGroup": {
+              "Name": "",
+              "MRN": null,
+              "GroupName": null,
+              "GroupID": 0,
+              "IsPatient": false,
+              "RecordID": 0,
+              "DisplayName": ""
+            },
+            "FromGroupDisplay": "",
+            "ToPatient": {
+              "Name": "Jane Example",
+              "MRN": null,
+              "GroupName": null,
+              "GroupID": 0,
+              "IsPatient": true,
+              "RecordID": 0,
+              "DisplayName": "Jane Example"
+            },
+            "ToPatientDisplay": "",
+            "ToUser": {
+              "Name": "",
+              "MRN": null,
+              "GroupName": null,
+              "GroupID": 0,
+              "IsPatient": false,
+              "RecordID": 0,
+              "DisplayName": ""
+            },
+            "ToUserDisplay": "",
+            "ToGroup": {
+              "Name": "Example Nurse Team",
+              "MRN": null,
+              "GroupName": null,
+              "GroupID": 1,
+              "IsPatient": false,
+              "RecordID": 0,
+              "DisplayName": "Example Nurse Team"
+            },
+            "ToGroupDisplay": "Example Nurse Team",
+            "Subject": "RE: Your results are ready",
+            "RelatedPatientDisplay": "Jane Example",
+            "RelatedPatient": {
+              "Name": "Jane Example",
+              "MRN": null,
+              "GroupName": null,
+              "GroupID": 0,
+              "IsPatient": true,
+              "RecordID": 0,
+              "DisplayName": "Jane Example"
+            },
+            "AssignedUser": {
+              "Name": "",
+              "MRN": null,
+              "GroupName": null,
+              "GroupID": 0,
+              "IsPatient": false,
+              "RecordID": 0,
+              "DisplayName": ""
+            },
+            "AssignedUserDisplay": "",
+            "Body": "",
+            "PlainTextBody": "Thank you.",
+            "BodyIsHTML": true,
+            "DtSentOrReceived": "2025-03-06T11:00:00.0000000+00:00",
+            "DisplaySentOrReceived": "03/06/2025 09:00 AM",
+            "MsgType": null,
+            "Draft": false,
+            "Trashed": false,
+            "Archived": false,
+            "ArchivedByPatient": false,
+            "NumAttachments": 0,
+            "NumReplies": 0,
+            "MessagesInThread": [],
+            "Attachments": [],
+            "RelatedLabResult": null
+          }
+        ],
+        "Attachments": [
+          {
+            "ID": 1201,
+            "FileName": "Example instructions.pdf"
+          }
+        ],
+        "RelatedLabResult": null
+      },
+      {
+        "MsgID": 1103,
+        "IsRead": true,
+        "DtRead": "2025-03-06T10:00:00+00:00",
+        "DisplayDtRead": "",
+        "IsReadByPatient": true,
+        "DtReadByPatient": "2025-03-06T10:00:00.0000000+00:00",
+        "DisplayDtReadByPatient": "03/06/2025 10:00 AM",
+        "FromPatient": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "FromPatientDisplay": null,
+        "FromUser": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "FromUserDisplay": "",
+        "FromGroup": {
+          "Name": "Example Nurse Team",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 1,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": "Example Nurse Team"
+        },
+        "FromGroupDisplay": "Example Nurse Team",
+        "ToPatient": {
+          "Name": "Jane Example",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": true,
+          "RecordID": 0,
+          "DisplayName": "Jane Example"
+        },
+        "ToPatientDisplay": "Jane Example",
+        "ToUser": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "ToUserDisplay": "",
+        "ToGroup": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "ToGroupDisplay": "",
+        "Subject": "Old note",
+        "RelatedPatientDisplay": "Jane Example",
+        "RelatedPatient": {
+          "Name": "Jane Example",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": true,
+          "RecordID": 0,
+          "DisplayName": "Jane Example"
+        },
+        "AssignedUser": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "AssignedUserDisplay": "",
+        "Body": "",
+        "PlainTextBody": "An old note.",
+        "BodyIsHTML": true,
+        "DtSentOrReceived": "2024-01-02T09:00:00.0000000+00:00",
+        "DisplaySentOrReceived": "03/06/2025 09:00 AM",
+        "MsgType": null,
+        "Draft": false,
+        "Trashed": false,
+        "Archived": false,
+        "ArchivedByPatient": false,
+        "NumAttachments": 0,
+        "NumReplies": 0,
+        "MessagesInThread": [],
+        "Attachments": [],
+        "RelatedLabResult": null
+      },
+      {
+        "MsgID": 1104,
+        "IsRead": true,
+        "DtRead": "2025-03-06T10:00:00+00:00",
+        "DisplayDtRead": "",
+        "IsReadByPatient": true,
+        "DtReadByPatient": "2025-03-06T10:00:00.0000000+00:00",
+        "DisplayDtReadByPatient": "03/06/2025 10:00 AM",
+        "FromPatient": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "FromPatientDisplay": null,
+        "FromUser": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "FromUserDisplay": "",
+        "FromGroup": {
+          "Name": "Example Nurse Team",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 1,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": "Example Nurse Team"
+        },
+        "FromGroupDisplay": "Example Nurse Team",
+        "ToPatient": {
+          "Name": "Jane Example",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": true,
+          "RecordID": 0,
+          "DisplayName": "Jane Example"
+        },
+        "ToPatientDisplay": "Jane Example",
+        "ToUser": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "ToUserDisplay": "",
+        "ToGroup": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "ToGroupDisplay": "",
+        "Subject": "Draft",
+        "RelatedPatientDisplay": "Jane Example",
+        "RelatedPatient": {
+          "Name": "Jane Example",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": true,
+          "RecordID": 0,
+          "DisplayName": "Jane Example"
+        },
+        "AssignedUser": {
+          "Name": "",
+          "MRN": null,
+          "GroupName": null,
+          "GroupID": 0,
+          "IsPatient": false,
+          "RecordID": 0,
+          "DisplayName": ""
+        },
+        "AssignedUserDisplay": "",
+        "Body": "",
+        "PlainTextBody": "Unsent.",
+        "BodyIsHTML": true,
+        "DtSentOrReceived": "2025-03-06T09:00:00.0000000+00:00",
+        "DisplaySentOrReceived": "03/06/2025 09:00 AM",
+        "MsgType": null,
+        "Draft": true,
+        "Trashed": false,
+        "Archived": false,
+        "ArchivedByPatient": false,
+        "NumAttachments": 0,
+        "NumReplies": 0,
+        "MessagesInThread": [],
+        "Attachments": [],
+        "RelatedLabResult": null
+      }
+    ],
+    "IsReadArchTrash": false
+  },
+  "r": null
+}

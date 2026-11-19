@@ -1,0 +1,51 @@
+{
+  "c": 0,
+  "t": "",
+  "d": {
+    "InstanceID": 0,
+    "Instance": null,
+    "Instances": [
+      {
+        "ID": 1301,
+        "HPTemplateID": 1401,
+        "PatientID": 303,
+        "HPSubmissionStatusID": 3,
+        "HPReviewStatusID": 1,
+        "AssignedDt": "2025-02-01T09:00:00.0000000-05:00",
+        "DisplayAssignedDt": "02/01/2025 09:00 AM",
+        "SubmitDt": "2025-02-02T15:00:00.000000-05:00",
+        "DisplaySubmitDt": "02/02/2025 03:00 PM",
+        "ReviewedDt": "0001-01-01T00:00:00+00:00",
+        "DisplayReviewedDt": "",
+        "SourceHPInstanceID": 0,
+        "ReviewerNotes": "",
+        "ModUserID": 0,
+        "ModEditDate": "2025-02-02T15:00:00.000000-05:00",
+        "Del": false
+      }
+    ],
+    "Answers": null,
+    "SelectedAnswerOptions": null,
+    "TemplateID": 0,
+    "SectionID": 0,
+    "Template": null,
+    "Templates": [
+      {
+        "ID": 1401,
+        "Name": "Example intake form",
+        "PhreesiaID": "",
+        "Description": "",
+        "IsPublished": true,
+        "CrtDt": "2024-01-01T00:00:00.000-05:00",
+        "DisplayCrtDt": "01/01/2024 12:00 AM",
+        "ModUserID": 0,
+        "ModEditDate": "2024-01-01T00:00:00.000-05:00",
+        "Del": false
+      }
+    ],
+    "Sections": null,
+    "Questions": null,
+    "QuestionAnswerOptions": null
+  },
+  "r": null
+}

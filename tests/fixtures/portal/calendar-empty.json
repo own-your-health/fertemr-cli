@@ -1,0 +1,26 @@
+{
+  "c": 0,
+  "t": "",
+  "d": {
+    "PtInPortal": "Y",
+    "PtID": 303,
+    "KyCycleHdr": 0,
+    "CycleLinkID": 0,
+    "CalID": 0,
+    "LastUpdate": "2025-03-01T00:00:00.0000000+00:00",
+    "HasCC": false,
+    "CalCycles": [],
+    "HasCM": false,
+    "CalMasters": [],
+    "HasCE": false,
+    "CalEvents": [],
+    "CalEventsUp": [],
+    "HasCT": false,
+    "CalTemplates": [],
+    "CurrentCal": null,
+    "PtName": "",
+    "PtMRN": "",
+    "PtDOB": ""
+  },
+  "r": null
+}

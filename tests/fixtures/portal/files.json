@@ -1,0 +1,25 @@
+{
+  "c": 0,
+  "t": "",
+  "d": {
+    "Results": [
+      {
+        "ID": 1001,
+        "Category": "Consents",
+        "SubCategory": "General",
+        "FileName": "Example consent.pdf",
+        "IsExternal": false,
+        "DownloadLink": ""
+      },
+      {
+        "ID": 1002,
+        "Category": "Education",
+        "SubCategory": "Links",
+        "FileName": "Example link",
+        "IsExternal": true,
+        "DownloadLink": "https://example.com/education"
+      }
+    ]
+  },
+  "r": null
+}

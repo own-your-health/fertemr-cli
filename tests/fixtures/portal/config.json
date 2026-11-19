@@ -1,0 +1,8 @@
+{
+  "clientCode": "EXAMPLE",
+  "clientNameFull": "Example Fertility Clinic",
+  "clientNameShort": "Example Fertility",
+  "baseUrl": "{BASE}",
+  "environment": "production",
+  "logoFile": "logo.png"
+}

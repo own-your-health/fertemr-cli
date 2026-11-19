@@ -1,0 +1,47 @@
+{
+  "c": 0,
+  "t": "",
+  "d": {
+    "Set": {
+      "ShowOocSource": true,
+      "ShowSpermSource": true,
+      "ShowDeviceNum": false,
+      "ShowEmbryoNum": true,
+      "ShowFreezeDate": true,
+      "ShowRecordStatus": true,
+      "ShowRecordDay": true,
+      "ShowStage": true,
+      "ShowGrade": true,
+      "ShowComment": true,
+      "ShowPGTA": true,
+      "ShowPGTOther": false,
+      "ShowSex": false,
+      "ShowInterpretation": false,
+      "ShowXferDate": true,
+      "ShowDiscardDate": false,
+      "PublishDateDisplay": "3/20/2025"
+    },
+    "Records": [
+      {
+        "RecordID": 901,
+        "OocSource": "Self",
+        "SpermSource": "Partner",
+        "DeviceNum": "",
+        "EmbryoNum": "1",
+        "FreezeDate": "3/10/2025",
+        "RecordStatus": "Frozen",
+        "RecordDay": "5",
+        "Stage": "Blastocyst",
+        "Grade": "4AA",
+        "Comment": "Example comment",
+        "PGTA": "Euploid",
+        "PGTOther": "",
+        "Sex": "",
+        "Interpretation": "",
+        "XferDate": "",
+        "DiscardDate": ""
+      }
+    ]
+  },
+  "r": null
+}

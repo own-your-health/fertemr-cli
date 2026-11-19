@@ -1,0 +1,31 @@
+{
+  "c": 0,
+  "t": "",
+  "d": {
+    "Folder": "Sent",
+    "DtFrom": null,
+    "DtTo": null,
+    "UnreadOnly": false,
+    "NotReplied": false,
+    "SearchTerm": null,
+    "TotalMessages": 0,
+    "Page": 0,
+    "PageSize": 1000,
+    "TotalPages": 0,
+    "Options_PageSize": [
+      {
+        "label": "10",
+        "value": "10"
+      }
+    ],
+    "Selected_PageSize": [
+      {
+        "label": "10",
+        "value": "10"
+      }
+    ],
+    "Messages": [],
+    "IsReadArchTrash": false
+  },
+  "r": null
+}
