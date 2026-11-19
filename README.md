@@ -94,9 +94,11 @@ profile, `auth login` is exit 2 unless `--overwrite`. A later sign-in reuses
 the profile's portal and its device id, so `--portal` is needed only the
 first time.
 
-The portal ends a session on its own. When it has, every reading command is
-exit 3 naming the sign-in that renews it (`auth login --profile <NAME>
---overwrite`).
+The portal ends a session on its own, after 20 to 40 minutes idle
+(`docs/api.md`), and fertemr keeps no password to renew it, so a pull
+usually starts with a sign-in. When the session has ended, every reading
+command is exit 3 naming the sign-in that starts a new one (`auth login
+--profile <NAME> --overwrite`).
 
 | What | Where | Removed by |
 | --- | --- | --- |
