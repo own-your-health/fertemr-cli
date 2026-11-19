@@ -321,9 +321,33 @@ fn sign_in_export_documents_and_sign_out() {
             .mode();
         assert_eq!(mode & 0o077, 0, "a saved document is owner-only");
     }
+    // Again into the same folder: each file is already there, so nothing is
+    // saved twice.
+    assert_eq!(
+        h.run(&["documents", "download", "--all", "--profile", "adult1", "-o", &all_s]),
+        0
+    );
+    assert_eq!(
+        std::fs::read_dir(&all).unwrap().count(),
+        3,
+        "a repeat saves no second copy"
+    );
+    // A different file holding a document's name leaves it saved beside it.
+    std::fs::write(all.join("Example consent.pdf"), b"%PDF-1.4 another file").unwrap();
+    assert_eq!(
+        h.run(&["documents", "download", "--all", "--profile", "adult1", "-o", &all_s]),
+        0
+    );
+    assert!(all.join("file-1001_Example consent.pdf").exists());
+    assert_eq!(std::fs::read_dir(&all).unwrap().count(), 4);
     assert_eq!(
         h.run(&["documents", "download", "file-9", "--profile", "adult1", "-o", &one]),
         4
+    );
+    assert_eq!(
+        h.run(&["documents", "list", "--profile", "adult1", "--since", "2025-02-30"]),
+        2,
+        "a day the month does not have"
     );
 
     // The passthrough reads, and refuses what is not a read before sending.
@@ -596,6 +620,29 @@ fn a_session_the_portal_dropped_reads_as_signed_out() {
     assert_eq!(h.run(&["documents", "list", "--profile", "adult1"]), 3);
     let out = h.dir.join("gone").display().to_string();
     assert_eq!(h.run(&["records", "export", "--profile", "adult1", "-o", &out]), 3);
+    // Signing out a session the portal already ended: the portal says so,
+    // which is signed out, and the session goes.
+    let session = h.store().get(&h.key("adult1")).unwrap().unwrap();
+    let api = fertemr::portal::Api::new(&session.api_base).unwrap();
+    assert!(api.sign_out(&session.device()).is_ok());
+    assert_eq!(h.run(&["auth", "logout", "--profile", "adult1"]), 0);
+    assert!(h.store().get(&h.key("adult1")).unwrap().is_none());
+}
+
+#[test]
+fn a_sign_out_the_portal_fails_still_removes_the_session() {
+    let h = H::new(Scenario {
+        logout_fails: true,
+        ..Scenario::default()
+    });
+    h.signed_in("adult1");
+    let session = h.store().get(&h.key("adult1")).unwrap().unwrap();
+    let api = fertemr::portal::Api::new(&session.api_base).unwrap();
+    let e = api.sign_out(&session.device()).unwrap_err();
+    assert_eq!(e.exit_code(), 5, "an error of the portal's is not a sign-out");
+    assert_eq!(h.run(&["auth", "logout", "--profile", "adult1"]), 0);
+    assert!(h.store().get(&h.key("adult1")).unwrap().is_none());
+    assert!(h.stub.holds_session(), "the portal was not told");
 }
 
 #[test]

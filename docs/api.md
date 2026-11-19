@@ -127,8 +127,12 @@ checks those).
   fractions of 2 to 7 digits, `M/D/YYYY` in the `Display…` fields, and
   `1901-01-01` for "none". fertemr keeps a time only with its zone, and
   treats a year before 1902 as no date.
-- **The session's lifetime.** A session was still accepted after 20 minutes
-  idle; longer gaps had not been measured when v0.1.0 was cut. When the
-  portal has ended a session, every command is exit 3 naming the sign-in.
+- **Sessions are short.** On 2026-11-19 a session was accepted after 20
+  minutes idle, and refused ("Existing session not found") at the next read,
+  40 minutes after that. So the portal ends a session after somewhere
+  between 20 and 40 minutes idle, or at a fixed age under about an hour;
+  these reads cannot tell the two apart. fertemr keeps no password, so a
+  pull usually starts with a sign-in. When the portal has ended a session,
+  every command is exit 3 naming it.
 - **Terms.** A sign-in answering `AcceptedLatestTOS: false` means the portal
   wants new terms accepted in its app. fertemr says so and never accepts them.

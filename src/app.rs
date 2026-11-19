@@ -463,9 +463,22 @@ pub(crate) fn now_rfc3339() -> String {
     dates::fmt_rfc3339(secs)
 }
 
-/// A `YYYY-MM-DD` date, zero-padded, so it compares as a string.
+/// A date flag's value as `YYYY-MM-DD`, zero-padded so it compares as a
+/// string. cli-common's `parse_iso` takes any day from 1 to 31, so a day the
+/// month does not have is refused here.
 fn iso(d: &str) -> Result<String, CliError> {
-    Ok(dates::fmt_iso(dates::parse_iso(d.trim())?))
+    let (y, m, day) = dates::parse_iso(d.trim())?;
+    let leap = (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    let last = match m {
+        2 if leap => 29,
+        2 => 28,
+        4 | 6 | 9 | 11 => 30,
+        _ => 31,
+    };
+    if day > last {
+        return Err(CliError::Usage(format!("`{}` is not a day of that month", d.trim())));
+    }
+    Ok(dates::fmt_iso((y, m, day)))
 }
 
 /// `records export`'s argument checks, before the config or the vault is
@@ -623,8 +636,36 @@ fn documents_list(ctx: &Ctx, range: &RangeArgs) -> Result<(), CliError> {
         ctx.note("no documents");
         return Ok(());
     }
-    Paged::new("document", rows).emit(ctx.json());
+    if ctx.json() {
+        Paged::new("document", rows).emit(true);
+    } else {
+        output::table(&document_rows(&rows));
+    }
     Ok(())
+}
+
+/// `documents list`'s table: the same columns in the same order on every
+/// row, a blank cell for an undated document. (cli-common's table takes its
+/// columns from the rows in the order it first meets them.)
+fn document_rows(rows: &[Document]) -> Vec<Value> {
+    const COLUMNS: [&str; 5] = ["id", "date", "name", "category", "file"];
+    rows.iter()
+        .map(|d| {
+            let v = serde_json::to_value(d).unwrap_or_default();
+            Value::Object(
+                COLUMNS
+                    .iter()
+                    .map(|c| (c.to_string(), v.get(*c).cloned().unwrap_or_else(|| Value::from(""))))
+                    .collect(),
+            )
+        })
+        .collect()
+}
+
+/// Whether `path` is a regular file (not a link) holding exactly `bytes`.
+fn same_file(path: &Path, bytes: &[u8]) -> bool {
+    std::fs::symlink_metadata(path).is_ok_and(|m| m.is_file() && m.len() == bytes.len() as u64)
+        && std::fs::read(path).is_ok_and(|b| b == bytes)
 }
 
 /// Write `bytes` to `path`, owner-only: an existing file only with
@@ -724,9 +765,19 @@ fn documents_download(ctx: &Ctx, args: &DownloadArgs) -> Result<(), CliError> {
                 }
             };
             // The portal's name, else one with the document id; a name taken
-            // in this batch or by another file is passed over.
+            // in this batch or by another file is passed over. A file there
+            // already holding these bytes is this document, saved before.
             let plain = saved_name(f);
             let candidates = [plain.clone(), format!("{}_{plain}", f.id)];
+            if let Some(name) = candidates
+                .iter()
+                .find(|name| !used.contains(&name.to_lowercase()) && same_file(&dir.join(name), &bytes))
+            {
+                used.insert(name.to_lowercase());
+                skipped
+                    .push(SkippedDocument::new(doc.id.clone(), format!("already saved as {name}")).with_code("exists"));
+                continue;
+            }
             let target = candidates.iter().find(|name| {
                 !used.contains(&name.to_lowercase())
                     && (args.overwrite || std::fs::symlink_metadata(dir.join(name)).is_err())
@@ -828,6 +879,37 @@ fn api(ctx: &Ctx, args: &ApiArgs) -> Result<(), CliError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_date_flag_is_a_real_day() {
+        assert_eq!(iso("2024-02-29").unwrap(), "2024-02-29");
+        assert_eq!(iso(" 2025-12-31 ").unwrap(), "2025-12-31");
+        for bad in [
+            "2025-02-29",
+            "2025-02-30",
+            "2025-04-31",
+            "1900-02-29",
+            "2025-13-01",
+            "25-01-01",
+        ] {
+            assert_eq!(iso(bad).unwrap_err().exit_code(), 2, "{bad}");
+        }
+    }
+
+    #[test]
+    fn the_documents_table_keeps_its_columns_in_order() {
+        let mut undated = Document::new("file-1", "a.pdf");
+        undated.file = Some("a.pdf".into());
+        let mut dated = Document::new("att-2", "b.pdf");
+        dated.date = Some("2025-01-02".into());
+        let rows = document_rows(&[undated, dated]);
+        for row in &rows {
+            let keys: Vec<&String> = row.as_object().unwrap().keys().collect();
+            assert_eq!(keys, ["id", "date", "name", "category", "file"]);
+        }
+        assert_eq!(rows[0]["date"], "");
+        assert_eq!(rows[1]["date"], "2025-01-02");
+    }
 
     fn parse(args: &[&str]) -> (Cli, Given) {
         let m = Cli::command().try_get_matches_from(args).unwrap();

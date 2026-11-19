@@ -295,13 +295,20 @@ impl Api {
             .send()
             .map_err(|e| net_error(&e))?;
         let status = resp.status().as_u16();
-        if (200..300).contains(&status) || status == 500 {
-            // A session the portal already dropped answers 500 with an
-            // envelope; signed out either way.
-            Ok(())
-        } else {
-            Err(CliError::Upstream(format!("the sign-out answered HTTP {status}")))
+        if (200..300).contains(&status) {
+            return Ok(());
         }
+        // A session the portal already dropped answers 500 with an envelope
+        // saying so: signed out either way. Any other failure is not.
+        let text = resp.text().unwrap_or_default();
+        let said = serde_json::from_str::<Envelope>(&text)
+            .ok()
+            .and_then(|e| e.t)
+            .unwrap_or_default();
+        if session_gone(&said) {
+            return Ok(());
+        }
+        Err(CliError::Upstream(format!("the sign-out answered HTTP {status}")))
     }
 
     /// One read, its envelope's `d`. `path` must pass [`check_read`].

@@ -94,9 +94,11 @@ profile, `auth login` is exit 2 unless `--overwrite`. A later sign-in reuses
 the profile's portal and its device id, so `--portal` is needed only the
 first time.
 
-The portal ends a session on its own. When it has, every reading command is
-exit 3 naming the sign-in that renews it (`auth login --profile <NAME>
---overwrite`).
+The portal ends a session on its own, after 20 to 40 minutes idle
+(`docs/api.md`), and fertemr keeps no password to renew it, so a pull
+usually starts with a sign-in. When the session has ended, every reading
+command is exit 3 naming the sign-in that starts a new one (`auth login
+--profile <NAME> --overwrite`).
 
 | What | Where | Removed by |
 | --- | --- | --- |
@@ -140,6 +142,19 @@ medrec.
 tests are offline: a stub portal on 127.0.0.1 answers from synthetic
 fixtures (`tests/fixtures/README.md`), and sessions live in an in-memory
 vault. See `AGENTS.md` and `CONTRIBUTING.md`.
+
+To try fertemr by hand on synthetic data, run the same stub as a process and
+point fertemr at a scratch vault:
+
+```sh
+cargo run --example stub-portal        # prints its address, user id and password
+export XDG_CONFIG_HOME=$(mktemp -d) FERTEMR_KEYCHAIN_SERVICE=piekstra.fertemr.stub
+fertemr profiles add test
+printf '%s\n' user@example.com right-password | fertemr auth login --profile test --portal <address> --stdin
+```
+
+`STUB_SCENARIO` (`no-embryology`, `files-fail`, `bad-pdf`, `no-calendar`,
+`logout-fails`, `expire-after=N`) makes it answer the way the tests' cases do.
 
 ## License
 
