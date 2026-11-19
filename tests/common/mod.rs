@@ -50,6 +50,8 @@ pub struct Scenario {
     pub no_config: bool,
     /// The treatment calendar holds events.
     pub calendar: bool,
+    /// The sign-out fails with an error of the portal's own.
+    pub logout_fails: bool,
 }
 
 impl Default for Scenario {
@@ -62,6 +64,7 @@ impl Default for Scenario {
             api_base: None,
             no_config: false,
             calendar: true,
+            logout_fails: false,
         }
     }
 }
@@ -244,6 +247,14 @@ fn serve(stream: TcpStream, port: u16, state: &Mutex<State>, scenario: &Scenario
         }
         held
     };
+    if path == "User/Logout" && scenario.logout_fails {
+        return respond(
+            &stream,
+            500,
+            json,
+            br#"{"c":9,"t":"Something went wrong","d":null,"r":null}"#,
+        );
+    }
     if !held {
         return respond(&stream, 500, json, fixture("session-gone.json").as_bytes());
     }

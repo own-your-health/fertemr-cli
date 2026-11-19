@@ -141,6 +141,19 @@ tests are offline: a stub portal on 127.0.0.1 answers from synthetic
 fixtures (`tests/fixtures/README.md`), and sessions live in an in-memory
 vault. See `AGENTS.md` and `CONTRIBUTING.md`.
 
+To try fertemr by hand on synthetic data, run the same stub as a process and
+point fertemr at a scratch vault:
+
+```sh
+cargo run --example stub-portal        # prints its address, user id and password
+export XDG_CONFIG_HOME=$(mktemp -d) FERTEMR_KEYCHAIN_SERVICE=piekstra.fertemr.stub
+fertemr profiles add test
+printf 'user@example.com\nright-password\n' | fertemr auth login --profile test --portal <address> --stdin
+```
+
+`STUB_SCENARIO` (`no-embryology`, `files-fail`, `bad-pdf`, `no-calendar`,
+`logout-fails`, `expire-after=N`) makes it answer the way the tests' cases do.
+
 ## License
 
 MIT or Apache-2.0, at your option.

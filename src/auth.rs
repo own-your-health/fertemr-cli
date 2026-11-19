@@ -449,7 +449,8 @@ impl LoggedOut {
     pub fn line(&self) -> String {
         let session = match (self.session_removed, self.signed_out_at_portal) {
             (true, Some(true)) => "signed out at the portal and removed the session from the vault",
-            (true, _) => "removed the session from the vault (the portal was not reached)",
+            (true, Some(false)) => "removed the session from the vault; the portal did not confirm the sign-out",
+            (true, None) => "removed the session from the vault",
             (false, _) => "no session was stored",
         };
         let profile = match self.browser_profile_removed {

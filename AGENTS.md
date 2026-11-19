@@ -102,4 +102,7 @@ nothing beyond loopback, and reads no real record.
   keys, and the models over the fixtures.
 - `tests/no_personal_data.rs`.
 
+`examples/stub-portal.rs` runs the same stub as a process, for driving the
+installed binary by hand (README § Development).
+
 `make verify` = fmt-check, clippy, test, smoke.
