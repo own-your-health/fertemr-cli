@@ -58,7 +58,6 @@ fn is_dummy_number(n: &str) -> bool {
 
 const PUBLIC_EMAIL_DOMAINS: &[&str] = &["example.com"];
 
-/// The personal-data shapes on one line, each as `kind value`.
 /// The line with every hex token of 32 characters or more that holds a
 /// letter blanked: a digest or a key, never a phone number or a record id.
 fn without_hex(line: &str) -> String {
@@ -84,6 +83,7 @@ fn without_hex(line: &str) -> String {
     out
 }
 
+/// The personal-data shapes on one line, each as `kind value`.
 fn scan_line(line: &str) -> Vec<String> {
     let line = &without_hex(line);
     let mut findings = Vec::new();
@@ -276,6 +276,10 @@ fn the_scanner_flags_real_shapes_and_passes_dummies() {
         "lives at 1234 NW Oak St, Somewhere",
         "record 7342918",
         "bad1234567",
+        // 31 hex digits with letters: under the threshold, so scanned.
+        "token a1234567890bcdef0123456789abcde",
+        // 32 digits and no letter: not a digest, so scanned.
+        "id 12345678901234567890123456789012",
     ] {
         assert!(!scan_line(real).is_empty(), "missed: {real}");
     }
@@ -286,6 +290,9 @@ fn the_scanner_flags_real_shapes_and_passes_dummies() {
         "user@example.com",
         "100 Example St, Example City",
         "GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb",
+        // A digest beside other text, or followed by a letter that is not hex.
+        "sha=551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb,",
+        "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470ebz 1",
     ] {
         assert!(
             scan_line(dummy).is_empty(),
