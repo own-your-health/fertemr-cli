@@ -3,45 +3,95 @@
 Unofficial; not affiliated with or endorsed by Redshift Technologies or any
 clinic.
 
-`fertemr` reads a patient's records from a clinic's patient portal on the
-FERT fertility EMR (`portal-<clinic>.fertemr.com`) and hands them to the
-household's medical-records system as FHIR (`records-stream/v1`, read by
-`medrec import --from fertemr`). It covers lab results, visits, embryology
-records, the files the clinic shared, messages and their attachments, intake
-forms and the treatment calendar. It is read-only: it sends the portal's own
-list, get and download reads, and nothing that changes anything there.
+`fertemr` is for anyone whose fertility clinic runs its patient portal on
+the FERT fertility EMR, at `portal-<clinic>.fertemr.com`. It signs in to the
+portal as you, with your own portal user id and password, and reads your
+records: lab results, visits, embryology records, the files the clinic
+shared, messages and their attachments, intake forms and the treatment
+calendar. It writes them as FHIR (`records-stream/v1`), which
+[medrec](https://github.com/own-your-health/medrec-cli) files
+(`medrec import --from fertemr`) and any other reader of the stream can use.
+It is read-only: it sends the portal's own list, get and download reads, and
+nothing that changes anything there.
 
-FERT publishes no patient API. fertemr reads the API the portal's own web
-app calls, as the patient, with the patient's sign-in. `docs/api.md` records
-how that was decided and every call fertemr makes.
+FERT publishes no patient API and has no developer program for patients, so
+there is nothing to register. fertemr reads the API the portal's own web app
+calls, as the patient, with the patient's sign-in. `docs/api.md` records how
+that was decided and every call fertemr makes.
+
+## The portal's terms
+
+The portal publishes no terms on automated access. Its sign-in answers carry
+the terms it wants accepted. When they say new terms are waiting, fertemr
+says so and stops, and you accept them in the portal yourself; fertemr never
+accepts them. fertemr reads only your own records, one request at a time,
+and changes nothing in the portal.
 
 ## Install
 
 ```sh
-cargo install --git https://github.com/piekstra/fertemr-cli --locked
+cargo install --git https://github.com/own-your-health/fertemr-cli --locked
 # or download a release: fertemr-<target>.tar.gz, then `fertemr self-update` later
 ```
+
+## Quick start
+
+```sh
+fertemr profiles add me
+fertemr orgs show <clinic>       # the clinic's public config.json; no sign-in
+printf '%s\n' '<portal user id>' "$PASSWORD" | fertemr auth login --profile me --portal <clinic> --stdin
+fertemr records export --profile me --ndjson | tail -1    # the trailer: what was read
+
+# File the records with medrec (it runs the export itself):
+medrec config set providers fertemr
+medrec import --from fertemr --from-profile me --patient <ID> --profile <records folder>
+```
+
+`<clinic>` is the short name in the portal's address (`someclinic` for
+`portal-someclinic.fertemr.com`). `<ID>` is the patient id `fertemr patients
+list --profile me` prints. A 1Password item works in place of stdin:
+`--op-item op://<VAULT>/<ITEM>` reads its `username` and `password` fields.
+
+## What needs you
+
+| Step | When | What you do |
+| --- | --- | --- |
+| A 1Password approval | each sign-in with `--op-item` | approve the two reads (username, password) |
+| The macOS Keychain | the first run of a new or upgraded binary | allow it to read fertemr's one vault key ("Always Allow") |
+| New portal terms | a sign-in the portal answers with terms waiting | accept them in the portal, then sign in again |
+
+The portal asks for no texted or emailed code, so a sign-in needs nothing
+else from you.
+
+## How long a sign-in lasts
+
+The portal ends a session after somewhere between 20 and 40 minutes idle
+(`docs/api.md`). fertemr keeps no password to renew it, so a pull usually
+starts with a sign-in, and an export right after it. When the session has
+ended, every command that reads the portal is exit 3 and names the sign-in
+to run. `fertemr auth status --profile <NAME> --check` asks the portal
+whether it still takes the session.
 
 ## Use
 
 One profile per portal account:
 
 ```sh
-fertemr profiles add adult1
+fertemr profiles add me
 fertemr orgs show someclinic                    # the clinic's public config.json; no sign-in
-fertemr auth login --profile adult1 --portal someclinic --op-item "op://Private/Clinic portal"
-fertemr auth status --profile adult1 --check    # one read: does the portal still accept the session?
-fertemr patients list --profile adult1
-fertemr documents list --profile adult1
-fertemr documents download --all --profile adult1 -o ~/Archive/Clinic
-fertemr records export --profile adult1 --ndjson | head -1    # the stream's header
+fertemr auth login --profile me --portal someclinic --op-item "op://Private/Clinic portal"
+fertemr auth status --profile me --check    # one read: does the portal still accept the session?
+fertemr patients list --profile me
+fertemr documents list --profile me
+fertemr documents download --all --profile me -o ~/Archive/Clinic
+fertemr records export --profile me --ndjson | head -1    # the stream's header
 
 # medrec runs the export itself:
 medrec config set providers fertemr
-medrec import --from fertemr --from-profile adult1 --patient <id> --profile <records folder>
+medrec import --from fertemr --from-profile me --patient <id> --profile <records folder>
 
 # One read of the portal's API, printed as the JSON it answers (docs/api.md lists them):
-fertemr api PPVisits/List --profile adult1
+fertemr api PPVisits/List --profile me
 ```
 
 `--portal` takes the clinic's short name (`someclinic` for
