@@ -664,3 +664,17 @@ fn profiles_and_reset() {
     assert_eq!(h.run(&["auth", "reset", "--force"]), 0);
     assert!(h.store().get(&h.key("adult3")).unwrap().is_none());
 }
+
+/// The current user comes in the portal's envelope: a live session reads as
+/// valid and names the patient, and one the portal ended reads as signed out.
+#[test]
+fn the_current_user_read_tells_a_live_session_from_an_ended_one() {
+    let h = H::new(Scenario::default());
+    h.signed_in("adult1");
+    let session = h.store().get(&h.key("adult1")).unwrap().unwrap();
+    let api = fertemr::portal::Api::new(&session.api_base).unwrap();
+    let user = api.current_user(&session.device()).unwrap();
+    assert_eq!(user.pt_id, Some(303));
+    h.stub.end_session();
+    assert!(api.current_user(&session.device()).unwrap_err().is_auth());
+}

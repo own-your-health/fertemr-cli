@@ -251,8 +251,9 @@ impl Api {
     }
 
     /// `User/GetUserPrefs`, a GET: the signed-in user, as the app reads it
-    /// on opening. A read with no effect, so it is how fertemr checks a
-    /// session (`auth status --check`, a `--browser` sign-in).
+    /// on opening, in the envelope every read but the sign-in comes in. A
+    /// read with no effect, so it is how fertemr checks a session (`auth
+    /// status --check`, a `--browser` sign-in).
     pub fn current_user(&self, device: &Device) -> Result<LoginAnswer, CliError> {
         let resp = self
             .http
@@ -265,23 +266,12 @@ impl Api {
             .map_err(|e| net_error(&e))?;
         let status = resp.status().as_u16();
         let text = resp.text().map_err(|e| net_error(&e))?;
-        let answer: LoginAnswer =
-            serde_json::from_str(&text).map_err(|_| not_json("User/GetUserPrefs", status, &text))?;
-        let said = answer.t.clone().or(answer.err.clone()).unwrap_or_default();
-        if session_gone(&said) || status == 401 || status == 403 {
+        if status == 401 || status == 403 {
             return Err(signed_out());
         }
-        if (200..300).contains(&status) && (answer.pt_id.is_some() || answer.username.is_some()) {
-            return Ok(answer);
-        }
-        Err(CliError::Upstream(format!(
-            "User/GetUserPrefs answered HTTP {status}{}",
-            if said.is_empty() {
-                String::new()
-            } else {
-                format!(": {}", one_line(&said))
-            }
-        )))
+        let env: Envelope = serde_json::from_str(&text).map_err(|_| not_json("User/GetUserPrefs", status, &text))?;
+        let user = envelope("User/GetUserPrefs", status, env)?;
+        Ok(serde_json::from_value(user).unwrap_or_default())
     }
 
     /// `User/Logout`, a GET in the web app.

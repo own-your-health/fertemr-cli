@@ -204,6 +204,11 @@ pub fn login(
         Source::Browser => {
             let device = browser_device(profile, &info, cmd.browser.fresh_profile, env.hermetic, quiet)?;
             let answer = api.current_user(&device)?;
+            if answer.pt_id.is_none() {
+                return Err(CliError::Upstream(
+                    "the portal's signed-in user names no patient; sign in with --op-item or --stdin instead".into(),
+                ));
+            }
             (device, answer)
         }
     };

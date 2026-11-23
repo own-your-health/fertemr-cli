@@ -56,7 +56,7 @@ answers its fields at the top level, and an envelope when it refuses.
 | Call | Body | Answer |
 | --- | --- | --- |
 | `User/LoginAttempt` | `{"username", "password", "osDetail", "pushToken": ""}` | `success`, `uniqueSessionID` (the session), `ppUserId`, `ptId` (the patient), `FullName`, `FirstName`, `LastName`, `AcceptedLatestTOS`, the patient's notification settings |
-| `GET User/GetUserPrefs` | none | the signed-in user, as the sign-in answers it without the session id; a pure read, which `auth status --check` and the browser sign-in use |
+| `GET User/GetUserPrefs` | none | the envelope, `d` the signed-in user with the sign-in answer's fields; a pure read, which `auth status --check` and the browser sign-in use |
 | `GET User/Logout` | none | ends the session |
 
 ### Records
@@ -106,6 +106,10 @@ checks those).
   session not found, please log in." an ended session (exit 3), and "The
   requested resource was not found" a list the patient does not have (a
   skip in the export, exit 4 from `api`).
+- **The current user comes in the envelope.** Unlike the sign-in answer it
+  repeats, `User/GetUserPrefs` answers `{"c": 0, "t": "", "d": <the user>,
+  "r": null}`. A real session confirmed it: read as a bare sign-in answer,
+  a live session looks like an error.
 - **The session is bound to its device id.** The right `suuid` with another
   `duuid` is "Existing session not found", and the session stays good with
   the right pair. fertemr keeps the device id with the session and reuses it
