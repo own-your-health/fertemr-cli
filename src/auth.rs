@@ -203,12 +203,7 @@ pub fn login(
         }
         Source::Browser => {
             let device = browser_device(profile, &info, cmd.browser.fresh_profile, env.hermetic, quiet)?;
-            let answer = api.current_user(&device)?;
-            if answer.pt_id.is_none() {
-                return Err(CliError::Upstream(
-                    "the portal's signed-in user names no patient; sign in with --op-item or --stdin instead".into(),
-                ));
-            }
+            let answer = with_patient(api.current_user(&device)?)?;
             (device, answer)
         }
     };
@@ -546,9 +541,34 @@ pub fn reset(force: bool, interactive: bool, env: &Env, json: bool, quiet: bool)
     Ok(())
 }
 
+/// A `--browser` sign-in's user, which must name the patient the session
+/// reads.
+fn with_patient(answer: LoginAnswer) -> Result<LoginAnswer, CliError> {
+    if answer.pt_id.is_some() {
+        return Ok(answer);
+    }
+    Err(
+        CliError::Upstream("the portal's signed-in user names no patient".into()).with_remedy(format!(
+            "sign in with the password instead: `{BIN} auth login --profile <NAME> --op-item op://VAULT/ITEM` (or --stdin)"
+        )),
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_browser_sign_in_needs_the_patient() {
+        let e = with_patient(LoginAnswer::default()).unwrap_err();
+        assert_eq!(e.exit_code(), 5);
+        assert!(e.remedy().is_some_and(|r| r.contains("--op-item")), "{e:?}");
+        let named = LoginAnswer {
+            pt_id: Some(303),
+            ..LoginAnswer::default()
+        };
+        assert_eq!(with_patient(named).unwrap().pt_id, Some(303));
+    }
 
     #[test]
     fn the_sign_in_reads_two_lines_and_never_quotes_them() {
