@@ -251,8 +251,9 @@ impl Api {
     }
 
     /// `User/GetUserPrefs`, a GET: the signed-in user, as the app reads it
-    /// on opening. A read with no effect, so it is how fertemr checks a
-    /// session (`auth status --check`, a `--browser` sign-in).
+    /// on opening, in the envelope every read but the sign-in comes in. A
+    /// read with no effect, so it is how fertemr checks a session (`auth
+    /// status --check`, a `--browser` sign-in).
     pub fn current_user(&self, device: &Device) -> Result<LoginAnswer, CliError> {
         let resp = self
             .http
@@ -265,23 +266,7 @@ impl Api {
             .map_err(|e| net_error(&e))?;
         let status = resp.status().as_u16();
         let text = resp.text().map_err(|e| net_error(&e))?;
-        let answer: LoginAnswer =
-            serde_json::from_str(&text).map_err(|_| not_json("User/GetUserPrefs", status, &text))?;
-        let said = answer.t.clone().or(answer.err.clone()).unwrap_or_default();
-        if session_gone(&said) || status == 401 || status == 403 {
-            return Err(signed_out());
-        }
-        if (200..300).contains(&status) && (answer.pt_id.is_some() || answer.username.is_some()) {
-            return Ok(answer);
-        }
-        Err(CliError::Upstream(format!(
-            "User/GetUserPrefs answered HTTP {status}{}",
-            if said.is_empty() {
-                String::new()
-            } else {
-                format!(": {}", one_line(&said))
-            }
-        )))
+        current_user_answer(status, &text)
     }
 
     /// `User/Logout`, a GET in the web app.
@@ -427,6 +412,24 @@ fn login_answer(resp: reqwest::blocking::Response, what: &str) -> Result<LoginAn
     Err(CliError::Auth(format!("{what} did not succeed: {}", one_line(&said))).because(Reason::CredentialRefused))
 }
 
+/// The signed-in user from `User/GetUserPrefs`' answer: the envelope's `d`,
+/// which must be a user. An ended session is exit 3; anything else that is
+/// not a user is an upstream error, never a live session.
+fn current_user_answer(status: u16, text: &str) -> Result<LoginAnswer, CliError> {
+    const PATH: &str = "User/GetUserPrefs";
+    if status == 401 || status == 403 {
+        return Err(signed_out());
+    }
+    let env: Envelope = serde_json::from_str(text).map_err(|_| not_json(PATH, status, text))?;
+    let user = envelope(PATH, status, env)?;
+    // The error names no value: the answer is the patient's own.
+    let not_a_user = || CliError::Upstream(format!("{PATH} answered HTTP {status} with no user in it"));
+    if !user.is_object() {
+        return Err(not_a_user());
+    }
+    serde_json::from_value(user).map_err(|_| not_a_user())
+}
+
 fn not_json(path: &str, status: u16, text: &str) -> CliError {
     let looks_html = text.trim_start().starts_with('<');
     CliError::Upstream(format!(
@@ -466,6 +469,28 @@ fn one_line(s: &str) -> String {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn the_current_user_is_the_envelopes_user_and_nothing_else() {
+        use super::current_user_answer as read;
+        let live = include_str!("../tests/fixtures/portal/user.json");
+        assert_eq!(read(200, live).unwrap().pt_id, Some(303));
+        let gone = include_str!("../tests/fixtures/portal/session-gone.json");
+        for (status, text, auth) in [
+            (500, gone, true),
+            (401, "", true),
+            (403, "", true),
+            (200, r#"{"c":0,"t":"","d":null,"r":null}"#, false),
+            (200, r#"{"c":0,"t":"","d":"a user","r":null}"#, false),
+            (200, r#"{"c":0,"t":"","d":[],"r":null}"#, false),
+            (500, r#"{"c":9,"t":"Something went wrong","d":null,"r":null}"#, false),
+            (200, "<html>sign in</html>", false),
+        ] {
+            let e = read(status, text).expect_err(text);
+            assert_eq!(e.is_auth(), auth, "{status} {text}: {}", e.message());
+            assert!(auth || e.exit_code() == 5, "{status} {text}: {}", e.message());
+        }
+    }
+
     use super::*;
 
     #[test]

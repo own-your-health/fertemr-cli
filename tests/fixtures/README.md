@@ -16,7 +16,7 @@ been seen.
 |---|---|
 | `config.json` | `GET /config.json` on the portal's web host; `{BASE}` is the stub's API base |
 | `login-ok.json` | `User/LoginAttempt`, signed in |
-| `user.json` | `User/GetUserPrefs`: the same user, no session id |
+| `user.json` | `User/GetUserPrefs`: the envelope (`c` 0), `d` the signed-in user with the session id |
 | `login-refused.json` | `User/LoginAttempt` with a wrong password: HTTP 500 and an envelope |
 | `session-gone.json` | any call with a session the portal does not hold: HTTP 500 and an envelope |
 | `not-found.json` | a list the clinic does not offer the patient (embryology): HTTP 500 and an envelope |
