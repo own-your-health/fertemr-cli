@@ -36,10 +36,10 @@ pub fn fixture(name: &str) -> String {
 /// What the stub answers, beyond the fixtures.
 #[derive(Clone, Debug)]
 pub struct Scenario {
-    /// Embryology answers "not found", as for a patient the clinic shows none.
-    pub embryology_offered: bool,
-    /// The files list answers HTTP 500 with an envelope of its own.
-    pub files_fail: bool,
+    /// The intake forms answer "not found", as a list not offered does.
+    pub forms_offered: bool,
+    /// The visits list answers HTTP 500 with an envelope of its own.
+    pub visits_fail: bool,
     /// The session ends after this many reads (sign-in excluded).
     pub expire_after: Option<usize>,
     /// The lab report PDF is served as HTML instead.
@@ -57,8 +57,8 @@ pub struct Scenario {
 impl Default for Scenario {
     fn default() -> Self {
         Scenario {
-            embryology_offered: true,
-            files_fail: false,
+            forms_offered: true,
+            visits_fail: false,
             expire_after: None,
             bad_pdf: false,
             api_base: None,
@@ -265,20 +265,20 @@ fn serve(stream: TcpStream, port: u16, state: &Mutex<State>, scenario: &Scenario
             state.lock().unwrap().session = None;
             respond(&stream, 200, json, br#"{"success":true,"msg":"","id":0}"#)
         }
-        "PPVisits/List" => answer("visits.json"),
-        "PPLab/List" => answer("labs.json"),
-        "PPEmbryology/List" if scenario.embryology_offered => answer("embryology.json"),
-        "PPEmbryology/List" => respond(&stream, 500, json, fixture("not-found.json").as_bytes()),
-        "PPFiles/List" if scenario.files_fail => respond(
+        "PPVisits/List" if scenario.visits_fail => respond(
             &stream,
             500,
             json,
             br#"{"c":9,"t":"Something went wrong","d":null,"r":null}"#,
         ),
+        "PPVisits/List" => answer("visits.json"),
+        "PPLab/List" => answer("labs.json"),
+        "PPEmbryology/List" => answer("embryology.json"),
         "PPFiles/List" => answer("files.json"),
         "PPMessaging/List" if body["Folder"] == "Inbox" => answer("messages-inbox.json"),
         "PPMessaging/List" => answer("messages-empty.json"),
-        "PPHP/ListInstances" => answer("hp-instances.json"),
+        "PPHP/ListInstances" if scenario.forms_offered => answer("hp-instances.json"),
+        "PPHP/ListInstances" => respond(&stream, 500, json, fixture("not-found.json").as_bytes()),
         "PPHP/Instance" if body["id"] == 1301 => answer("hp-instance.json"),
         "PPCalendar/List" if scenario.calendar => answer("calendar.json"),
         "PPCalendar/List" => answer("calendar-empty.json"),
@@ -292,7 +292,10 @@ fn serve(stream: TcpStream, port: u16, state: &Mutex<State>, scenario: &Scenario
             }
         }
         "PPMessaging/DownloadAttachment" if body["FileID"] == 1201 => {
-            respond(&stream, 200, "application/pdf", &pdf("instructions"))
+            respond(&stream, 200, "application/pdf", &pdf("letter"))
+        }
+        "PPMessaging/DownloadAttachment" if body["FileID"] == 1202 => {
+            respond(&stream, 200, "application/pdf", &pdf("summary"))
         }
         _ => respond(&stream, 500, json, fixture("not-found.json").as_bytes()),
     }

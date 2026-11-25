@@ -36,12 +36,11 @@ These come from the household's plan and are not negotiable.
   identity field in the fixtures against its dummy value.
 - Records and their contents are never sent to an outside service: no
   health-data aggregator, cloud OCR or other company's API. A Claude session
-  is not one of these (the household's decision, 2026-11-17). A session may
-  read the household's real records when the work needs it (debugging a real
-  export, mapping the portal with real answers); real data stays out of
-  tracked files, commits, pull requests and issues, and out of messages to
-  other sessions unless they need it. A raw capture is deleted from `/tmp`
-  once it has served.
+  is not one of these. A session may read records
+  when the work needs it (debugging an export, mapping the portal's field
+  names); real data stays out of tracked files, commits, pull requests and
+  issues, and out of messages to other sessions unless they need it. A raw
+  capture is deleted from `/tmp` once it has served.
 - `records export -o DIR` is refused for a real portal (only a stub on this
   machine, `http://`, may write a file); real records go straight into
   medrec through a pipe.
@@ -98,8 +97,8 @@ nothing beyond loopback, and reads no real record.
   an empty service and a per-test `XDG_CONFIG_HOME`; only paths that store no
   session: every `--help`, exit codes, the JSON error, `info`, completions,
   `NO_COLOR`, a refused sign-in against the stub.
-- `tests/fixture_shapes.rs`: the fixtures' keys against the real answers'
-  keys, and the models over the fixtures.
+- `tests/fixture_shapes.rs`: the fixtures' keys against the portal's field
+  names, and the models over the fixtures.
 - `tests/no_personal_data.rs`.
 
 `examples/stub-portal.rs` runs the same stub as a process, for driving the

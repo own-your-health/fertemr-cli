@@ -10,7 +10,7 @@
 //! ```
 //!
 //! `STUB_SCENARIO` takes a comma-separated list of the cases the tests use:
-//! `no-embryology`, `files-fail`, `bad-pdf`, `no-calendar`, `logout-fails`,
+//! `no-forms`, `visits-fail`, `bad-pdf`, `no-calendar`, `logout-fails`,
 //! `expire-after=N`.
 
 #[path = "../tests/common/mod.rs"]
@@ -21,8 +21,8 @@ fn main() {
     for case in std::env::var("STUB_SCENARIO").unwrap_or_default().split(',') {
         match case.trim() {
             "" => {}
-            "no-embryology" => scenario.embryology_offered = false,
-            "files-fail" => scenario.files_fail = true,
+            "no-forms" => scenario.forms_offered = false,
+            "visits-fail" => scenario.visits_fail = true,
             "bad-pdf" => scenario.bad_pdf = true,
             "no-calendar" => scenario.calendar = false,
             "logout-fails" => scenario.logout_fails = true,

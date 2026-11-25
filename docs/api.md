@@ -4,16 +4,16 @@ FERT is a fertility EMR by Redshift Technologies. A clinic on it has a patient
 portal at `https://portal-<clinic>.fertemr.com`: a Flutter web app that
 calls an ASP.NET API on another host of the clinic's (commonly
 `portal-<clinic>-api.fertemr.com`). fertemr calls that API the way the app
-does. Everything below was read from the app's code and its traffic as a
-signed-in patient on 2026-11-19, except where it says otherwise.
+does. Everything below was read from the app's code and its traffic, except
+where it says otherwise.
 
 ## Route
 
-| Question | Answer, 2026-11-19 |
+| Question | Answer |
 | --- | --- |
 | A patient FHIR API (ONC certified, SMART on FHIR) | None. ONC's Certified Health IT Product List (chpl.healthit.gov) lists no product by Redshift Technologies or named FERT; the one match for "FERT" is an unrelated vendor's. On the API host, `/fhir/metadata`, `/fhir/r4/metadata` and `/.well-known/smart-configuration` answer 404, and so do `/metadata` and `/swagger` |
 | A developer program | None for patients. The vendor's site advertises an "Open API Ecosystem" to clinics and their partners (scheduling, billing, labs, patient portals), with no public documentation, sandbox or sign-up |
-| The portal's terms on automated access | The portal publishes none. Its sign-in answers carry the terms it wants accepted (`LatestTOSText`, `LatestTOSVersion`), and for the account they were checked with these were empty, with nothing pending |
+| The portal's terms on automated access | The portal publishes none. Its sign-in answers carry the terms it wants accepted (`LatestTOSText`, `LatestTOSVersion`) |
 | The route | The portal's own API, signed in as the patient, read-only |
 
 So there is no API to ask for and no terms to weigh. fertemr signs in as
@@ -108,14 +108,12 @@ checks those).
   skip in the export, exit 4 from `api`).
 - **The current user comes in the envelope.** Unlike the sign-in answer it
   repeats, `User/GetUserPrefs` answers `{"c": 0, "t": "", "d": <the user>,
-  "r": null}`. A real session confirmed it: read as a bare sign-in answer,
-  a live session looks like an error.
+  "r": null}`. Read as a bare sign-in answer, a live session looks like an
+  error.
 - **The session is bound to its device id.** The right `suuid` with another
   `duuid` is "Existing session not found", and the session stays good with
   the right pair. fertemr keeps the device id with the session and reuses it
   for the profile's later sign-ins.
-- **Embryology is per clinic and per patient.** Where it is not offered,
-  `PPEmbryology/List` answers "The requested resource was not found".
 - **Opening a message in the app marks it read** (`SetReadStatus`). fertemr
   reads the lists only, so messages it exports stay unread in the portal.
 - **Drafts are the patient's own unsent text.** fertemr leaves the `Draft`
@@ -124,19 +122,17 @@ checks those).
   name says it is (a PDF starts `%PDF`) before writing it, and skips one that
   is not (`verify_failed`).
 - **A form answer's option.** A choice question's answer names one of its
-  `QuestionAnswerOptions`. The answers seen were redacted in the recording, so
-  whether it names the option's `ID` or its `Value` is not confirmed; fertemr
-  reads either, and a comma-separated list of either.
+  `QuestionAnswerOptions`. Whether it names the option's `ID` or its
+  `Value` is not confirmed; fertemr reads either, and a comma-separated list
+  of either.
 - **Dates come in several spellings**: ISO 8601 with and without an offset,
   fractions of 2 to 7 digits, `M/D/YYYY` in the `Display…` fields, and
   `1901-01-01` for "none". fertemr keeps a time only with its zone, and
   treats a year before 1902 as no date.
-- **Sessions are short.** On 2026-11-19 a session was accepted after 20
-  minutes idle, and refused ("Existing session not found") at the next read,
-  40 minutes after that. So the portal ends a session after somewhere
-  between 20 and 40 minutes idle, or at a fixed age under about an hour;
-  these reads cannot tell the two apart. fertemr keeps no password, so a
-  pull usually starts with a sign-in. When the portal has ended a session,
-  every command is exit 3 naming it.
+- **Sessions are short.** The portal ends a session after somewhere between
+  20 and 40 minutes idle ("Existing session not found"), and may also end one
+  at a fixed age; the exact rule is not confirmed. fertemr keeps no password,
+  so a pull usually starts with a sign-in. When the portal has ended a
+  session, every command is exit 3 naming it.
 - **Terms.** A sign-in answering `AcceptedLatestTOS: false` means the portal
   wants new terms accepted in its app. fertemr says so and never accepts them.

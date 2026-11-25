@@ -11,16 +11,16 @@
         "PatientID": 303,
         "HPSubmissionStatusID": 3,
         "HPReviewStatusID": 1,
-        "AssignedDt": "2025-02-01T09:00:00.0000000-05:00",
-        "DisplayAssignedDt": "02/01/2025 09:00 AM",
-        "SubmitDt": "2025-02-02T15:00:00.000000-05:00",
-        "DisplaySubmitDt": "02/02/2025 03:00 PM",
+        "AssignedDt": "2024-03-05T09:00:00.0000000-07:00",
+        "DisplayAssignedDt": "03/05/2024 09:00 AM",
+        "SubmitDt": "2024-03-11T09:00:00.000000-07:00",
+        "DisplaySubmitDt": "03/11/2024 09:00 AM",
         "ReviewedDt": "0001-01-01T00:00:00+00:00",
         "DisplayReviewedDt": "",
         "SourceHPInstanceID": 0,
         "ReviewerNotes": "",
         "ModUserID": 0,
-        "ModEditDate": "2025-02-02T15:00:00.000000-05:00",
+        "ModEditDate": "2024-03-11T09:00:00.000000-07:00",
         "Del": false
       }
     ],
@@ -32,14 +32,14 @@
     "Templates": [
       {
         "ID": 1401,
-        "Name": "Example intake form",
+        "Name": "Example questionnaire",
         "PhreesiaID": "",
         "Description": "",
         "IsPublished": true,
-        "CrtDt": "2024-01-01T00:00:00.000-05:00",
-        "DisplayCrtDt": "01/01/2024 12:00 AM",
+        "CrtDt": "2023-06-01T00:00:00.000-07:00",
+        "DisplayCrtDt": "06/01/2023 12:00 AM",
         "ModUserID": 0,
-        "ModEditDate": "2024-01-01T00:00:00.000-05:00",
+        "ModEditDate": "2023-06-01T00:00:00.000-07:00",
         "Del": false
       }
     ],

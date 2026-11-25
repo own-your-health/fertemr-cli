@@ -219,9 +219,10 @@ fn sign_in_export_documents_and_sign_out() {
     assert_eq!(trailer["skipped"].as_array().unwrap().len(), 0, "{trailer}");
 
     assert_eq!(ids(&stream, "Patient"), ["303"]);
-    assert_eq!(ids(&stream, "Encounter"), ["visit-501", "visit-502"]);
-    assert_eq!(find(&stream, "Encounter", "visit-501")["status"], "finished");
-    assert_eq!(find(&stream, "Encounter", "visit-502")["status"], "planned");
+    assert_eq!(ids(&stream, "Encounter"), ["visit-511", "visit-512", "visit-513"]);
+    assert_eq!(find(&stream, "Encounter", "visit-511")["status"], "cancelled");
+    assert_eq!(find(&stream, "Encounter", "visit-512")["status"], "finished");
+    assert_eq!(find(&stream, "Encounter", "visit-513")["status"], "planned");
     assert_eq!(
         ids(&stream, "Observation"),
         ["lab-7001", "lab-7002", "lab-7003", "embryo-901"]
@@ -238,14 +239,17 @@ fn sign_in_export_documents_and_sign_out() {
     assert_eq!(find(&stream, "Observation", "lab-7003")["valueString"], "Negative");
     assert_eq!(find(&stream, "Observation", "lab-7003")["status"], "preliminary");
     // Drafts stay out; a reply names the message it answers.
-    assert_eq!(ids(&stream, "Communication"), ["msg-1101", "msg-1102", "msg-1103"]);
     assert_eq!(
-        find(&stream, "Communication", "msg-1102")["inResponseTo"][0]["reference"],
-        "Communication/msg-1101"
+        ids(&stream, "Communication"),
+        ["msg-1103", "msg-1104", "msg-1102", "msg-1101"]
+    );
+    assert_eq!(
+        find(&stream, "Communication", "msg-1104")["inResponseTo"][0]["reference"],
+        "Communication/msg-1103"
     );
     assert_eq!(
         ids(&stream, "DocumentReference"),
-        ["file-1001", "file-1002", "att-1201", "calendar"]
+        ["file-1001", "file-1002", "att-1201", "att-1202", "calendar"]
     );
     assert_eq!(
         find(&stream, "DocumentReference", "file-1002")["content"][0]["attachment"]["url"],
@@ -253,7 +257,7 @@ fn sign_in_export_documents_and_sign_out() {
     );
     assert_eq!(
         ids(&stream, "Binary"),
-        ["labpdf-801-1", "file-1001", "att-1201", "calendar"]
+        ["labpdf-801-1", "file-1001", "att-1201", "att-1202", "calendar"]
     );
     // Each Binary right after the resource that names it.
     for (i, r) in stream.iter().enumerate() {
@@ -269,8 +273,8 @@ fn sign_in_export_documents_and_sign_out() {
     assert_eq!(form["status"], "completed");
     let sections = form["item"][0]["item"].as_array().unwrap();
     assert_eq!(sections.len(), 2, "the unanswered section is left out");
-    assert_eq!(sections[1]["item"][0]["answer"][0]["valueString"], "No");
-    assert_eq!(sections[1]["item"][1]["answer"].as_array().unwrap().len(), 2);
+    assert_eq!(sections[1]["item"][0]["answer"][0]["valueString"], "Often");
+    assert_eq!(sections[1]["item"][1]["answer"].as_array().unwrap().len(), 3);
     for r in &stream[1..stream.len() - 1] {
         assert_eq!(r["meta"]["source"], "fertemr:portal", "{}", r["id"]);
     }
@@ -310,7 +314,12 @@ fn sign_in_export_documents_and_sign_out() {
     saved.sort();
     assert_eq!(
         saved,
-        ["Example consent.pdf", "Example instructions.pdf", "Example report.pdf"]
+        [
+            "Example consent.pdf",
+            "Example letter.pdf",
+            "Example report.pdf",
+            "Example summary.pdf"
+        ]
     );
     #[cfg(unix)]
     {
@@ -329,7 +338,7 @@ fn sign_in_export_documents_and_sign_out() {
     );
     assert_eq!(
         std::fs::read_dir(&all).unwrap().count(),
-        3,
+        4,
         "a repeat saves no second copy"
     );
     // A different file holding a document's name leaves it saved beside it.
@@ -339,7 +348,7 @@ fn sign_in_export_documents_and_sign_out() {
         0
     );
     assert!(all.join("file-1001_Example consent.pdf").exists());
-    assert_eq!(std::fs::read_dir(&all).unwrap().count(), 4);
+    assert_eq!(std::fs::read_dir(&all).unwrap().count(), 5);
     assert_eq!(
         h.run(&["documents", "download", "file-9", "--profile", "adult1", "-o", &one]),
         4
@@ -439,7 +448,7 @@ fn since_leaves_out_what_is_dated_before() {
         .unwrap()
         .contains(&"Observation".into()));
     assert_eq!(ids(&stream, "DiagnosticReport"), ["lab-order-601"]);
-    assert_eq!(ids(&stream, "Communication"), ["msg-1101", "msg-1102"]);
+    assert_eq!(ids(&stream, "Communication"), ["msg-1103", "msg-1104", "msg-1102"]);
     // Undated embryology stays in.
     assert!(ids(&stream, "Observation").contains(&"embryo-901".to_string()));
     assert_eq!(
@@ -478,8 +487,8 @@ fn a_session_the_portal_ends_mid_export_ends_the_stream_incomplete() {
 #[test]
 fn what_the_portal_does_not_serve_is_a_skip() {
     let h = H::new(Scenario {
-        embryology_offered: false,
-        files_fail: true,
+        forms_offered: false,
+        visits_fail: true,
         bad_pdf: true,
         calendar: false,
         ..Scenario::default()
@@ -507,10 +516,13 @@ fn what_the_portal_does_not_serve_is_a_skip() {
         })
         .collect();
     assert!(
-        skips.contains(&("unsupported".into(), "PPEmbryology/List".into())),
+        skips.contains(&("unsupported".into(), "PPHP/ListInstances".into())),
         "{skips:?}"
     );
-    assert!(skips.contains(&("upstream".into(), "PPFiles/List".into())), "{skips:?}");
+    assert!(
+        skips.contains(&("upstream".into(), "PPVisits/List".into())),
+        "{skips:?}"
+    );
     assert!(
         skips.contains(&("verify_failed".into(), "lab-order-601".into())),
         "{skips:?}"
@@ -519,7 +531,8 @@ fn what_the_portal_does_not_serve_is_a_skip() {
     let report = find(&stream, "DiagnosticReport", "lab-order-601");
     assert!(report.get("presentedForm").is_none());
     assert!(!ids(&stream, "Binary").contains(&"labpdf-801-1".to_string()));
-    assert!(ids(&stream, "Observation").iter().all(|id| !id.starts_with("embryo-")));
+    assert!(ids(&stream, "QuestionnaireResponse").is_empty());
+    assert!(ids(&stream, "Encounter").is_empty());
     assert!(!ids(&stream, "DocumentReference").contains(&"calendar".to_string()));
     // documents list says what it could not read and lists the rest.
     assert_eq!(h.run(&["documents", "list", "--profile", "adult1"]), 0);

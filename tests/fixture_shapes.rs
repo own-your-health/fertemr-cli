@@ -1,8 +1,8 @@
-//! The fixtures against the portal's real answers, and fertemr's models
+//! The fixtures against the portal's field names, and fertemr's models
 //! against the fixtures.
 //!
-//! Where a real answer has been seen, its keys are pinned here (keys only:
-//! the values are invented), so a fixture cannot drift from the portal. Then
+//! The portal's field names are pinned here (names only: the values are
+//! invented), so a fixture cannot drift from the portal. Then
 //! each fixture is read through the model fertemr uses, and the fields the
 //! mapping reads must come out set, so a renamed field fails here instead of
 //! emptying a resource.
@@ -33,7 +33,7 @@ fn set(list: &str) -> BTreeSet<String> {
     list.split_whitespace().map(str::to_string).collect()
 }
 
-/// The keys of the real answers, as seen in the portal's traffic.
+/// The field names the portal sends.
 #[test]
 fn fixtures_have_the_keys_the_portal_sends() {
     let login = fixture("login-ok.json");
@@ -169,11 +169,14 @@ fn the_models_read_what_the_mapping_uses() {
         .all(|f| f.id.is_some() && f.file_name.is_some() && f.is_external.is_some()));
 
     let msgs: MessageList = serde_json::from_value(d("messages-inbox.json")).unwrap();
-    let m = &msgs.messages[0];
+    let m = msgs.messages.iter().find(|m| !m.messages_in_thread.is_empty()).unwrap();
     assert!(m.msg_id.is_some() && m.subject.is_some() && m.plain_text_body.is_some());
     assert!(m.dt_sent_or_received.is_some() && m.from_group_display.is_some());
-    assert_eq!(m.attachments.len(), 1);
     assert_eq!(m.messages_in_thread.len(), 1);
+    assert!(msgs.messages.iter().any(|m| m.attachments.len() == 2));
+    assert!(
+        msgs.messages.iter().any(|m| m.draft == Some(true)) && msgs.messages.iter().any(|m| m.trashed == Some(true))
+    );
 
     let hp: HealthProfile = serde_json::from_value(d("hp-instance.json")).unwrap();
     assert!(hp

@@ -1021,8 +1021,8 @@ mod tests {
     #[test]
     fn dates_keep_a_time_only_with_its_zone() {
         assert_eq!(
-            datetime("2020-01-02T09:30:00-05:00").as_deref(),
-            Some("2020-01-02T09:30:00-05:00")
+            datetime("2020-01-02T09:30:00-08:00").as_deref(),
+            Some("2020-01-02T09:30:00-08:00")
         );
         assert_eq!(
             datetime("2020-01-02T09:30:00.0000001+00:00").as_deref(),
@@ -1033,8 +1033,8 @@ mod tests {
             Some("2020-01-02T09:30:00Z")
         );
         assert_eq!(
-            datetime("2020-01-02T09:30:00-0500").as_deref(),
-            Some("2020-01-02T09:30:00-05:00")
+            datetime("2020-01-02T09:30:00-0800").as_deref(),
+            Some("2020-01-02T09:30:00-08:00")
         );
         assert_eq!(datetime("2020-01-02T09:30:00").as_deref(), Some("2020-01-02"));
         assert_eq!(datetime("2020-01-02").as_deref(), Some("2020-01-02"));
@@ -1045,14 +1045,14 @@ mod tests {
         assert_eq!(datetime("13/40/2020"), None);
         assert_eq!(datetime("soon"), None);
         assert_eq!(instant("2020-01-02T09:30:00"), None);
-        assert_eq!(day("2020-01-02T23:30:00-05:00").as_deref(), Some("2020-01-02"));
+        assert_eq!(day("2020-01-02T23:30:00-08:00").as_deref(), Some("2020-01-02"));
     }
 
     #[test]
     fn a_visit_status_reads_as_fhir_and_keeps_its_words() {
         let v = Visit {
             id: Some(7),
-            visit_date: Some("2020-01-02T09:00:00-05:00".into()),
+            visit_date: Some("2020-01-02T09:00:00-08:00".into()),
             status: Some("Checked Out".into()),
             appt_duration: Some("30".into()),
             appt_duration_units: Some("Minutes".into()),
@@ -1068,7 +1068,7 @@ mod tests {
         assert_eq!(e["location"][0]["location"]["display"], "Main, Example City");
         let later = Visit {
             id: Some(8),
-            visit_date: Some("2030-01-02T09:00:00-05:00".into()),
+            visit_date: Some("2030-01-02T09:00:00-08:00".into()),
             ..Default::default()
         };
         assert_eq!(encounter(&ctx(), &later, "2026-01-01").unwrap()["status"], "planned");
@@ -1086,7 +1086,7 @@ mod tests {
             result_unit: Some("ng/mL".into()),
             result_abnormal: Some("L".into()),
             lab_status_str: Some("Final".into()),
-            specimen_collection_date: Some("2020-01-02T08:00:00-05:00".into()),
+            specimen_collection_date: Some("2020-01-02T08:00:00-08:00".into()),
             ..Default::default()
         };
         let o = lab_observation(&ctx(), &doc, &r).unwrap();
@@ -1148,7 +1148,7 @@ mod tests {
     #[test]
     fn a_form_groups_answered_questions_by_section() {
         let hp: HealthProfile = serde_json::from_value(json!({
-            "Instance": { "ID": 3, "HPTemplateID": 9, "SubmitDt": "2020-01-02T10:00:00-05:00" },
+            "Instance": { "ID": 3, "HPTemplateID": 9, "SubmitDt": "2020-01-02T10:00:00-08:00" },
             "Template": { "ID": 9, "Name": "Example intake" },
             "Sections": [{ "ID": 1, "Name": "First", "DisplayOrder": 2 }, { "ID": 2, "Name": "Empty", "DisplayOrder": 1 }],
             "Questions": [
