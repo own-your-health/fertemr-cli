@@ -171,8 +171,8 @@ command is exit 3 naming the sign-in that starts a new one (`auth login
 
 Every resource carries `meta.source` `fertemr:portal`, a stable id, and a
 tag saying it was mapped from the portal. A `Binary` follows the resource
-that names it. What the portal does not serve the patient (no embryology,
-a list that fails, a file that is not the PDF it claims to be) is a skip in
+that names it. What the portal does not serve the patient (a list not
+offered, a list that fails, a file that is not the PDF it claims to be) is a skip in
 the stream's trailer with its code, not an error. A session that ends
 mid-export ends the stream incomplete (`complete: false`, exit 3), and medrec
 files nothing from it.
@@ -203,7 +203,7 @@ fertemr profiles add test
 printf '%s\n' user@example.com right-password | fertemr auth login --profile test --portal <address> --stdin
 ```
 
-`STUB_SCENARIO` (`no-embryology`, `files-fail`, `bad-pdf`, `no-calendar`,
+`STUB_SCENARIO` (`no-forms`, `visits-fail`, `bad-pdf`, `no-calendar`,
 `logout-fails`, `expire-after=N`) makes it answer the way the tests' cases do.
 
 ## License
