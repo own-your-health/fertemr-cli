@@ -460,7 +460,7 @@ pub struct FormOption {
 }
 
 /// `PPCalendar/List`: `d`. The calendar's own lists are kept as the portal
-/// sends them (`tests/fixtures/README.md` says what is known of them).
+/// sends them (`tests/fixtures/portal/calendar.json`).
 #[derive(Debug, Default, Deserialize)]
 #[serde(default)]
 pub struct Calendar {

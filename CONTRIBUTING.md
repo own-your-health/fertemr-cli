@@ -5,7 +5,8 @@
 2. Fixtures are synthetic. A new answer shape becomes a file in
    `tests/fixtures/portal/`. Field names, types, codes and statuses follow the
    site; everything else is invented (which items, how many, their order,
-   dates, amounts and text), never a copy of a real answer.
+   dates, amounts and text), never a copy of a real answer. The dummy values
+   are listed in `tests/fixtures/README.md`.
 3. No personal data anywhere: code, docs, commit messages, pull requests,
    issues. `tests/no_personal_data.rs` enforces the shapes; review the rest.
 4. A new portal call comes with its entry in `docs/api.md`, a fixture, and
